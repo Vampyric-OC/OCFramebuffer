@@ -1,0 +1,16 @@
+[
+{
+  "modid": "ocframebuffer",
+  "name": "OC Framebuffer",
+  "description": "OpenComputers Framebuffer.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["V"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

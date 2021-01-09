@@ -18,9 +18,33 @@ JNIEXPORT jlong JNICALL Java_shmem_get_1handle
 /*
  * Class:     shmem
  * Method:    get_next_frame
- * Signature: (J)Ljava/nio/ByteBuffer;
+ * Signature: (J)Z
  */
-JNIEXPORT jobject JNICALL Java_shmem_get_1next_1frame
+JNIEXPORT jboolean JNICALL Java_shmem_get_1next_1frame
+  (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     shmem
+ * Method:    get_content_buffer
+ * Signature: (J)[Ljava/nio/ByteBuffer;
+ */
+JNIEXPORT jobjectArray JNICALL Java_shmem_get_1content_1buffer
+  (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     shmem
+ * Method:    get_foreground_color_buffer
+ * Signature: (J)[Ljava/nio/ByteBuffer;
+ */
+JNIEXPORT jobjectArray JNICALL Java_shmem_get_1foreground_1color_1buffer
+  (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     shmem
+ * Method:    get_background_color_buffer
+ * Signature: (J)[Ljava/nio/ByteBuffer;
+ */
+JNIEXPORT jobjectArray JNICALL Java_shmem_get_1background_1color_1buffer
   (JNIEnv *, jobject, jlong);
 
 #ifdef __cplusplus

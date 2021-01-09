@@ -34,5 +34,8 @@ public class shmem {
   }
 
   public native long get_handle();
-  public native ByteBuffer get_next_frame(long handle);
+  public native boolean get_next_frame(long handle);
+  public native ByteBuffer[] get_content_buffer(long handle);
+  public native ByteBuffer[] get_foreground_color_buffer(long handle);
+  public native ByteBuffer[] get_background_color_buffer(long handle);
 }

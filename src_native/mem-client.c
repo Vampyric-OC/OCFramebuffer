@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
                              NULL,                    // default security
                              PAGE_READWRITE,          // read/write access
                              0,                       // maximum object size (high-order DWORD)
-                             PAGE,                    // maximum object size (low-order DWORD)
+                             MEMSIZE,                    // maximum object size (low-order DWORD)
                              path);                   // name of mapping object
 
   if (handle == NULL) {
@@ -44,13 +44,13 @@ int main(int argc, char *argv[]) {
   // TBD.
 #endif  // WIN
 
-  memset(mem->buffer[0], ' ', 80 * 25);
+  memset(mem->content_buffer[0], ' ', sizeof(mem->content_buffer[0]));
   mem->ready = 1;
 
   while (1) {
     for (int i = 0; i < 80 * 25; i++) {
-      memset(mem->buffer[0], ' ', 80 * 25);
-      mem->buffer[0][i] = '.';
+      memset(mem->content_buffer[0], ' ', sizeof(mem->content_buffer[0]));
+      mem->content_buffer[0][i] = '.';
     }
   }
 

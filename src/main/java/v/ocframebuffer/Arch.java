@@ -20,7 +20,9 @@
 package v.ocframebuffer;
 
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Map;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -112,16 +114,56 @@ public class Arch implements Architecture {
  
   @Override
   public void runSynchronized() {
-    ByteBuffer buffer = mem.get_next_frame(handle);
-    
-    if (screen != null && buffer != null) {
-      byte[] dst = new byte[80];
+    if (screen == null || !mem.get_next_frame(handle)) {
+      return;
+    }
 
-      for (int row = 0; row < 25; row++) {
-        buffer.get(dst, 0, 80);
-        screen.set(0, row, new String(dst, StandardCharsets.ISO_8859_1), false);
+    // Native returns arrays of direct allocated ByteBuffers, so with the right view it should be zero copy.
+    // Take that Java! I win! ;-). Proper framebuffers (VGA Card/VGA Gpu) will get a 32bit full color bytebuffer.
+    //
+    // ps. Another way to fix this is passing preallocated double arrays to native and let native fill that.
+    // But that would result in copying in native (will be faster for TextBuffer as it would replace the for below).
+    //
+    // FIXME: Are rawSetText, rawSetForeground and rawSetbackground broken in OC?
+
+    byte[] content_row = new byte[80];
+    int[] color_row = new int[80];
+    int[][] foreground_color = new int[25][80];
+    int[][] background_color = new int[25][80];
+
+    ByteBuffer[] content_buffer = mem.get_content_buffer(handle);
+    ByteBuffer[] foreground_color_buffer = mem.get_foreground_color_buffer(handle);
+    ByteBuffer[] background_color_buffer = mem.get_background_color_buffer(handle);
+
+    for (int row = 0; row < 25; row++) {
+      content_buffer[row].get(content_row);
+      screen.set(0, row, new String(content_row, Charset.forName("cp437")), false);
+//      screen.set(0, row, new String(content_row, StandardCharsets.ISO_8859_1), false);
+    }
+
+/*
+// Colorum est rumpitur.
+
+//      foreground_color_buffer[row].asIntBuffer().get(color_row);
+//      foreground_color[row] = color_row;
+
+//      background_color_buffer[row].asIntBuffer().get(color_row);
+//      background_color[row] = color_row;
+    int[][] foreground_color_test = new int[3][3];
+    int[][] background_color_test = new int[3][3];
+
+    for (int row = 0; row < 3; row++) {
+      for (int col = 0; col < 3; col++) {
+        foreground_color_test[row][col] = (row * 0x400000) | 0x00ff00 | (col * 0x000020);
+        background_color_test[row][col] = (row * 0x000020) | (col * 0x400000);
       }
     }
+    
+    screen.rawSetForeground(0, 0, foreground_color_test);
+    screen.rawSetBackground(0, 0, background_color_test);
+
+    screen.data.color[3][3] = 0x050a;
+*/
   }
  
   @Override
